@@ -3,8 +3,16 @@ public class Polynomial {
 	int order;
 	int[] coefficients;
 	
-	
 	Polynomial(int[] coefficients){
+		this.coefficients = coefficients;
+		this.order = coefficients.length;
+	}
+	
+	Polynomial(int[] coefficientsExp,boolean isExp ){
+		int[] coefficients = new int[coefficientsExp.length];
+		for(int i = 0; i < coefficientsExp.length;i ++) {
+			coefficients[i] = GF256.table[coefficientsExp[i]];		
+		}
 		this.coefficients = coefficients;
 		this.order = coefficients.length;
 	}
@@ -47,10 +55,10 @@ public class Polynomial {
 	}
 	
 	Polynomial mul(Polynomial poly) {
-		int[] resultCoefficients = new int[poly.order * this.order];
+		int[] resultCoefficients = new int[poly.order + this.order - 1];
 		for(int i = 0; i < this.order;i++) {
 			for(int j = 0; j < poly.order;j++) {
-				resultCoefficients[i+j] =  coefficients[i] * poly.coefficients[j];
+				resultCoefficients[i+j] +=  coefficients[i] * poly.coefficients[j];
 			}
 		}
 		Polynomial result = new Polynomial(resultCoefficients);
@@ -67,9 +75,22 @@ public class Polynomial {
 	}
 	
 	Polynomial[] div(Polynomial poly) {
-		for(int order = this.order;order <= poly.order; order --) {
-			
+		int[] quotientCoefficients = new int[this.order - poly.order];
+		Polynomial remainder = new Polynomial(this.coefficients);
+		Polynomial quotent = new Polynomial(quotientCoefficients);
+		Polynomial[] ans = {quotent,remainder};
+		for(int order = this.order - poly.order;order >= 0; order --) {
+			int[] c = new int[order];
+			c[order -1] = remainder.coefficients[coefficients.length -1];
+			Polynomial q =  new Polynomial(c);
+			quotent = quotent.add(q);
+			remainder = remainder.sub(poly.mul(quotent));
+			System.out.println("quotent:");
+			System.out.println(quotent);
+			System.out.println("remainder:");
+			System.out.println(remainder);
 		}
+		return ans;
 	}
 	
 	int[] removeLeadingZero(int[] arr) {
@@ -88,7 +109,7 @@ public class Polynomial {
 	public String toString() {
 		String str = "";
 		for(int i = 0; i < this.coefficients.length; i++) {
-			str = this.coefficients[i] + " " + str;
+			str = this.coefficients[i] +"x"+i+" " + str;
 		}
 		return str;
 	}
