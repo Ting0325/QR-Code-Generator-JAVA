@@ -75,21 +75,25 @@ public class Driver {
 		String ecc = "10000101101010010101111000000111000010100011011011001001";
 		//String ecc = "11010000100011111000010110111000000010011001101100010101";
 		int[] message = {17,236,17,236,17,236,64,67,77,220,114,209,120,11,91,32};
-		int[] ten = {0,0,0,0,0,0,0,0,0,0,10};
+		int[] ten = {0,0,0,0,0,0,0,0,0,0,1};
 		int[] generatorExp = {45,32,94,64,70,118,61,46,67,251,0};
 		Polynomial polyMessage = new Polynomial(message);
 		Polynomial polyTen = new Polynomial(ten);	
 		Polynomial polyGen = new Polynomial(generatorExp,true);	
+		byte b0 = 91;
+		byte b1 = 2;
+		System.out.print("here");
+		System.out.println(b0 ^ b1);
+		/*
 		System.out.println(polyMessage.order);
 		System.out.println(polyTen.order);
 		System.out.println(polyMessage);
 		System.out.println(polyTen);
 		System.out.println(polyMessage.mul(polyTen));
-		System.out.println(polyGen);
-		byte b0 = 91;
-		byte b1 = 2;
-		System.out.print("here");
-		System.out.println(b0 ^ b1);
+		*/
+		polyMessage = polyMessage.mul(polyTen);
+		Polynomial polyEcc = polyMessage.div(polyGen)[0];
+
 		encodedWord = encodedWord+ecc;
 		System.out.println(encodedWord);
 		drawBrick(pattern, 0, 0);
