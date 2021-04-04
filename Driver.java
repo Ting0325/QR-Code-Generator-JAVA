@@ -74,6 +74,12 @@ public class Driver {
 		//ECC codewords
 		String ecc = "10000101101010010101111000000111000010100011011011001001";
 		//String ecc = "11010000100011111000010110111000000010011001101100010101";
+		int[] arr = {17,236,17,236,17,236,64,67,77,220,114,209,120,11,91,32};
+		int[] ten = {0,0,0,0,0,0,0,0,0,0,10};
+		byte b0 = 91;
+		byte b1 = 2;
+		System.out.print("here");
+		System.out.println(b0 ^ b1);
 		encodedWord = encodedWord+ecc;
 		System.out.println(encodedWord);
 		drawBrick(pattern, 0, 0);
