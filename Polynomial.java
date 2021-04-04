@@ -93,7 +93,7 @@ public class Polynomial {
 		int[] resultCoefficients = new int[poly.order + this.order - 1];
 		for(int i = 0; i < this.order;i++) {
 			for(int j = 0; j < poly.order;j++) {
-				resultCoefficients[i+j] +=  coefficients[i] * poly.coefficients[j];
+				resultCoefficients[i+j] +=  (GF256.antiTable(this.coefficients[i]) * GF256.antiTable(poly.coefficients[j])) % 255;
 			}
 		}
 		Polynomial result = new Polynomial(resultCoefficients);
@@ -114,7 +114,7 @@ public class Polynomial {
 			System.out.println("previous remainder:");
 			System.out.println(remainder);
 			System.out.println("poly.mul(q):");
-			System.out.println(poly.mul(q));
+			System.out.println(poly.mulGF(q));
 			System.out.println("poly:");
 			System.out.println(poly);
 			remainder = remainder.xor(poly.mul(q));
