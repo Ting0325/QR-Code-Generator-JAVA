@@ -68,9 +68,11 @@ public class Driver {
 		for(int i = 0; i < 17;i ++) {
 			encodedWord = encodedWord + toBinaryFixLength((int)text.charAt(i),8);
 		}
+		
 		//byte padding to 152 bits = 19 bytes
 		//end sequence
 		encodedWord = encodedWord + "0000";
+		System.out.println("encodedWord:"+encodedWord);
 		//ECC codewords
 		String ecc = "10000101101010010101111000000111000010100011011011001001";
 		//String ecc = "11010000100011111000010110111000000010011001101100010101";
@@ -80,10 +82,12 @@ public class Driver {
 		Polynomial polyMessage = new Polynomial(message);
 		Polynomial polyTen = new Polynomial(ten);	
 		Polynomial polyGen = new Polynomial(generatorExp,true);	
-		byte b0 = 91;
-		byte b1 = 2;
-		System.out.print("here");
-		System.out.println(b0 ^ b1);
+		byte b0 = (byte)243;
+		byte b1 = (byte)159;
+		System.out.println("GF");
+		System.out.println(GF256.table[24]);
+		//System.out.print("here");
+		System.out.println("b0 mul b1"+GF256.table[(GF256.antiTable(b0) + GF256.antiTable(b1)) % 255]);
 		/*
 		System.out.println(polyMessage.order);
 		System.out.println(polyTen.order);
@@ -92,10 +96,10 @@ public class Driver {
 		System.out.println(polyMessage.mul(polyTen));
 		*/
 		polyMessage = polyMessage.mul(polyTen);
-		Polynomial polyEcc = polyMessage.div(polyGen)[0];
+		Polynomial polyEcc = polyMessage.div(polyGen)[1];
 
 		encodedWord = encodedWord+ecc;
-		System.out.println(encodedWord);
+		//System.out.println(encodedWord);
 		drawBrick(pattern, 0, 0);
 		drawBrick(pattern, 14, 0);
 		drawBrick(pattern, 0, 14);
