@@ -1,4 +1,3 @@
-
 public class Polynomial {
 	int order;
 	int[] coefficients;
@@ -133,7 +132,7 @@ public class Polynomial {
 			c[order -1] = remainder.coefficients[remainder.coefficients.length -1];
 			Polynomial q =  new Polynomial(c);
 			quotent = quotent.add(q);
-			
+			/*
 			System.out.println("q:");
 			System.out.println(q);
 			System.out.println("poly:");
@@ -142,15 +141,18 @@ public class Polynomial {
 			System.out.println(remainder);
 			System.out.println("poly.mul(q):");
 			System.out.println(poly.mulGF(q));
-
+			 */
 			
 			remainder = remainder.xor(poly.mulGF(q));
-			
+			/*
 			System.out.println("quotent:");
 			System.out.println(quotent);
 			System.out.println("remainder:");
 			System.out.println(remainder);
 			System.out.println("iteration :"+(17-order));
+			*/
+			ans[0] = quotent;
+			ans[1] = remainder;
 		}
 		return ans;
 	}

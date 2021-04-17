@@ -38,6 +38,12 @@ public class Driver {
 		
 	}
 	
+	static void printArr(int[] arr) {
+		for(int i = 0; i < arr.length;i ++) {
+			System.out.print(arr[i]+" ");
+		}
+	}
+	
 	static void printArr2d(int[][] arr) {
 		for(int i = 0; i < arr.length;i ++) {
 			for(int j = 0; j < arr[i].length;j++) {
@@ -70,24 +76,38 @@ public class Driver {
 		}
 		
 		//byte padding to 152 bits = 19 bytes
+		
+
 		//end sequence
 		encodedWord = encodedWord + "0000";
-		System.out.println("encodedWord:"+encodedWord);
+		
+		//get message poly
+		//System.out.println("len: "+encodedWord.length());
+		int[] message = new int[19];
+		for(int i =0; i < 19;i ++) {
+			message[18 -i] = Integer.parseInt(encodedWord.substring(i*8, i*8+8),2);
+			//System.out.println(Integer.parseInt(encodedWord.substring(i*8, i*8+8),2));
+		}
+		//System.out.println("message poly");
+		//printArr(message);
+		//System.out.println("encodedWord:"+encodedWord);
 		//ECC codewords
-		String ecc = "10000101101010010101111000000111000010100011011011001001";
+		//String ecc = "10000101101010010101111000000111000010100011011011001001";
 		//String ecc = "11010000100011111000010110111000000010011001101100010101";
-		int[] message = {17,236,17,236,17,236,64,67,77,220,114,209,120,11,91,32};
+		//int[] message = {17,236,17,236,17,236,64,67,77,220,114,209,120,11,91,32};
 		int[] ten = {0,0,0,0,0,0,0,0,0,0,1};
-		int[] generatorExp = {45,32,94,64,70,118,61,46,67,251,0};
+		int[] seven = {0,0,0,0,0,0,0,1};
+		//int[] generatorExp = {45,32,94,64,70,118,61,46,67,251,0};
+		int[] generatorExp = {21,102,238,149,146,229,87,0};
 		Polynomial polyMessage = new Polynomial(message);
-		Polynomial polyTen = new Polynomial(ten);	
+		Polynomial polyTen = new Polynomial(seven);	
 		Polynomial polyGen = new Polynomial(generatorExp,true);	
 		byte b0 = (byte)243;
 		byte b1 = (byte)159;
 		System.out.println("GF");
 		System.out.println(GF256.table[24]);
 		//System.out.print("here");
-		System.out.println("b0 mul b1"+GF256.table[(GF256.antiTable(b0) + GF256.antiTable(b1)) % 255]);
+		//System.out.println("b0 mul b1"+GF256.table[(GF256.antiTable(b0) + GF256.antiTable(b1)) % 255]);
 		/*
 		System.out.println(polyMessage.order);
 		System.out.println(polyTen.order);
@@ -95,9 +115,16 @@ public class Driver {
 		System.out.println(polyTen);
 		System.out.println(polyMessage.mul(polyTen));
 		*/
-		polyMessage = polyMessage.mul(polyTen);
+		polyMessage = polyMessage.mul(sengleTermPoly(1,7));
 		Polynomial polyEcc = polyMessage.div(polyGen)[1];
-
+		//System.out.println("polyEcc");
+		//System.out.println(polyEcc);
+		String ecc = "";
+		for(int i = 0; i < 7;i ++) {
+			ecc = toBinaryFixLength(polyEcc.coefficients[i],8) + ecc;
+			//System.out.println(polyEcc.coefficients[i]);
+		}
+		//System.out.println("ecc:\n"+ecc);
 		encodedWord = encodedWord+ecc;
 		//System.out.println(encodedWord);
 		drawBrick(pattern, 0, 0);
@@ -216,8 +243,8 @@ public class Driver {
 			}
 		}
 	}
+	
 	static void drawCodeWordNoConvertSpecial(int arr[][],int x,int y,int type,String word) {
-		
 		if(type == 1){
 			int c = 7;
 			for(int i = 3; i >= 0;i --) {
@@ -258,6 +285,7 @@ public class Driver {
 			}
 		}
 	}
+	
 	static String toBinaryFixLength(int num,int len) {
 		String str = Integer.toBinaryString(num);
 		if(str.length() > len) {
@@ -335,6 +363,7 @@ public class Driver {
 			arr[i+13][8] = vertical2[i];
 		}
 	}
+	
 	static void drawTimingBits(int[][] arr) {
 		int[] bits = {1,0,1,0,1};
 		for(int i = 0;i < bits.length;i ++) {
@@ -343,5 +372,11 @@ public class Driver {
 		for(int i = 0;i < bits.length;i ++) {
 			arr[i+8][6] = bits[i];
 		}
+	}
+	
+	static Polynomial sengleTermPoly(int coefficient,int order) {
+		int[] coe = new int[order+1];
+		coe[order] = coefficient;
+		return new Polynomial(coe);
 	}
 }
