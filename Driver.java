@@ -54,16 +54,31 @@ public class Driver {
 	}
 	
 	static int[][]  patternGen() {
+		Scanner sc = new Scanner(System.in);
 		int[][] pattern = new int[21][21];
 		//String encodedWord = "0100000100010100100001100101011011000110110001101111001011000010000001110111011011110111001001101100011001000010000100100000001100010011001000110011000010000101101010010101111000000111000010100011011011001001";
 		//String encodedWord = "0100000011100100111001110101011101000111001100100000010010010110111001110011011101000110100101110100011101010111010001100101000011101100000100011110110011010000100011111000010110111000000010011001101100010101";
 								
-		String text = "Hello, world! 123";
+		//String text = "Hello, world! 123";
+		//String text = "nuts.epass2u.com/";
+		System.out.println("INPUT TEXT:");
+		String text = sc.next();
+		if(text.length()>17) {
+			text = text.substring(0,18);
+		}
+		System.out.println("text.length(): "+text.length());
+		System.out.println("text.length() binary: "+toBinaryFixLength(text.length(),8));
+		
+		//String text = "google.com";
 		String encodedWord = "";
+		
 		//mode
 		encodedWord = "0100";
 		//character count 17
-		encodedWord = encodedWord + "00010001";
+		//encodedWord = encodedWord + "00010001";
+		//encodedWord = encodedWord + "00001010";
+		encodedWord = encodedWord + toBinaryFixLength(text.length(),8);
+		
 		//encode characters
 		/*
 		System.out.println(text.charAt(0));
@@ -71,13 +86,22 @@ public class Driver {
 		System.out.println(toBinaryFixLength((int)text.charAt(0),8));
 		*/
 		
-		for(int i = 0; i < 17;i ++) {
+		for(int i = 0; i < text.length();i ++) {
 			encodedWord = encodedWord + toBinaryFixLength((int)text.charAt(i),8);
 		}
 		
+		/*
+		for(int i = 0; i < 10;i ++) {
+			encodedWord = encodedWord + toBinaryFixLength((int)text.charAt(i),8);
+		}
+
+		*/
 		//byte padding to 152 bits = 19 bytes
 		
-
+		for(int i = 0; i < 17-text.length();i ++) {
+			encodedWord = encodedWord + "00000000";
+		}
+		
 		//end sequence
 		encodedWord = encodedWord + "0000";
 		
@@ -379,4 +403,6 @@ public class Driver {
 		coe[order] = coefficient;
 		return new Polynomial(coe);
 	}
+	
+	 
 }
